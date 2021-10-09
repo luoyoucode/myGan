@@ -9,25 +9,37 @@ class Reshape(nn.Module):
         self.shape = args
 
     def forward(self, x):
-        return x.view(self.shape)
+        return x.view((-1,)+self.shape)
 
 
 class Generation(nn.Module):
     def __init__(self):
         super(Generation, self).__init__()
-        self.GenStruct = nn.Sequential(
+        self.Dense = nn.Sequential(
             nn.Linear(100, 128 * 16 * 16),
-            nn.ReLU(),
             Reshape(128, 16, 16),
-            nn.MaxUnpool2d(kernel_size=2, stride=2),
-            nn.Conv2d(128,128,kernel_size=3,padding=1,stride=1),
             nn.ReLU(),
-            nn.MaxUnpool2d(kernel_size=2,stride=2),
-
         )
 
-    def forward(self, inputs):
-        output = self.GenStruct(inputs)
-        return output
+        self.GenStruct = nn.Sequential(
+            nn.MaxUnpool2d(kernel_size=2, stride=2),
+            nn.Conv2d(128, 128, kernel_size=3, padding=1, stride=1),
+            nn.ReLU(),
+            #nn.MaxUnpool2d(kernel_size=2, stride=2),
+            nn.Conv2d(128, 64, kernel_size=3, padding=1, stride=1),
+            nn.ReLU(),
+            nn.Conv2d(64, 3, kernel_size=3, padding=1, stride=1),
+            nn.Tanh()
+        )
 
+    def forward(self, x):
+        x = self.Dense(x)
+        #x = torch.Tensor(x)
+        #x = self.GenStruct(x)
+        return x
 
+model = Generation()
+
+a = torch.ones(64,100)
+b = model(a)
+print(b.size())
