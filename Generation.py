@@ -26,7 +26,7 @@ class Generation(nn.Module):
             nn.Conv2d(128, 64, kernel_size=3, padding=1, stride=1),
             nn.ReLU(),
             nn.Conv2d(64, 3, kernel_size=3, padding=1, stride=1),
-            nn.Tanh()
+            nn.Tanh(),
         )
 
     def forward(self, inputs):
