@@ -15,13 +15,10 @@ class Reshape(nn.Module):
 class Generation(nn.Module):
     def __init__(self):
         super(Generation, self).__init__()
-        self.Dense = nn.Sequential(
+        self.GenStruct = nn.Sequential(
             nn.Linear(100, 128 * 16 * 16),
             Reshape(128, 16, 16),
             nn.ReLU(),
-        )
-
-        self.GenStruct = nn.Sequential(
             nn.Upsample(scale_factor=2,mode='nearest'),
             nn.Conv2d(128, 128, kernel_size=3, padding=1, stride=1),
             nn.ReLU(),
@@ -32,11 +29,9 @@ class Generation(nn.Module):
             nn.Tanh()
         )
 
-    def forward(self, x):
-        x = self.Dense(x)
-        x = torch.Tensor(x)
-        x = self.GenStruct(x)
-        return x
+    def forward(self, inputs):
+        output = self.GenStruct(inputs)
+        return output
 
 model = Generation()
 
