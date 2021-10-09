@@ -22,10 +22,10 @@ class Generation(nn.Module):
         )
 
         self.GenStruct = nn.Sequential(
-            nn.MaxUnpool2d(kernel_size=2, stride=2),
+            nn.Upsample(scale_factor=2,mode='nearest'),
             nn.Conv2d(128, 128, kernel_size=3, padding=1, stride=1),
             nn.ReLU(),
-            #nn.MaxUnpool2d(kernel_size=2, stride=2),
+            nn.Upsample(scale_factor=2,mode='nearest'),
             nn.Conv2d(128, 64, kernel_size=3, padding=1, stride=1),
             nn.ReLU(),
             nn.Conv2d(64, 3, kernel_size=3, padding=1, stride=1),
@@ -34,8 +34,8 @@ class Generation(nn.Module):
 
     def forward(self, x):
         x = self.Dense(x)
-        #x = torch.Tensor(x)
-        #x = self.GenStruct(x)
+        x = torch.Tensor(x)
+        x = self.GenStruct(x)
         return x
 
 model = Generation()
